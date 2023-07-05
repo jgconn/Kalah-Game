@@ -17,6 +17,8 @@ public class Kalah {
 		SeedList seedList = new SeedList();
 		Rules rules = new Rules();
 		Board board = new Board(io, rules, seedList);
-		io.println("Player 1's turn - Specify house number or 'q' to quit: ");
+		PlayerTurn playerTurn = new PlayerTurn(io, rules);
+		//io.println("Player 1's turn - Specify house number or 'q' to quit: ");
+		playerTurn.nextTurn();
 	}
 }
