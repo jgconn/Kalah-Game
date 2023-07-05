@@ -9,6 +9,7 @@ import com.qualitascorpus.testsupport.MockIO;
  * with something more appropriate)
  */
 public class Kalah {
+	private String playerInput = "";
 	public static void main(String[] args) {
 		new Kalah().play(new MockIO());
 	}
@@ -18,7 +19,30 @@ public class Kalah {
 		Rules rules = new Rules();
 		Board board = new Board(io, rules, seedList);
 		PlayerTurn playerTurn = new PlayerTurn(io, rules);
-		//io.println("Player 1's turn - Specify house number or 'q' to quit: ");
-		playerTurn.nextTurn();
+		Movement movement = new Movement(playerTurn, seedList);
+
+		while (!playerInput.equals("q")) {
+			playerInput = playerTurn.getPrompt();
+			try {
+				if (playerInput.equals("q")) {
+					throw new IllegalArgumentException("Game over!");
+				}
+
+				int playerInputInt = Integer.parseInt(playerInput);
+
+				if (playerInputInt < 1 || playerInputInt > 6) {
+					throw new ArrayIndexOutOfBoundsException("Out of boudnds, please try again!");
+				}
+
+				// add movement class
+
+			} catch (NumberFormatException e) {
+				io.println("Invalid input, please try again!");
+			} catch (IllegalArgumentException e) {
+				io.println(e.getMessage());
+			} catch (ArrayIndexOutOfBoundsException e) {
+				io.println((e.getMessage()));
+			}
+		}
 	}
 }
