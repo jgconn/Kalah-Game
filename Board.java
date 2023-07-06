@@ -10,12 +10,7 @@ public class Board {
 
     public Board(IO io, Rules rules, SeedList seedList) {
         this.io = io;
-
-        outerBoarder();
-        player2Board(rules.getLstOfPlayers(), seedList.getMapP2());
-        innerBoarder();
-        player1Board(rules.getLstOfPlayers(), seedList.getMapP1());
-        outerBoarder();
+        printBoard(rules, seedList);
     }
 
     public void printBoard(Rules rules, SeedList seedList) {
@@ -52,7 +47,7 @@ public class Board {
 
     public void player1Board(String[] lstOfPlayers, Map<Integer, Integer> mapP1) {
         io.print("| " + mapP1.get(7) + "  | ");
-        
+
         int count = 0;
         for (Map.Entry<Integer, Integer> entry : mapP1.entrySet()) {
             count++;
