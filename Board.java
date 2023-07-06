@@ -35,20 +35,33 @@ public class Board {
 
         io.print("| " + lstOfPlayers[1] + " | ");
 
-        for (Map.Entry<Integer, Integer> set :
-            mapP2.entrySet()) {
-            io.print(set.getKey() + "[ " + set.getValue() + "] | ");
+        int count = 0;
+
+        for (Map.Entry<Integer, Integer> entry : mapP2.entrySet()) {
+            count++;
+
+            System.out.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
+
+            if (count >= 6) {
+                break;
+            }
         }
 
-        io.println("0  |");
+        io.println(mapP2.get(7) + "  |");
     }
 
     public void player1Board(String[] lstOfPlayers, Map<Integer, Integer> mapP1) {
-        io.print("| 0  | ");
+        io.print("| " + mapP1.get(7) + "  | ");
+        
+        int count = 0;
+        for (Map.Entry<Integer, Integer> entry : mapP1.entrySet()) {
+            count++;
 
-        for (Map.Entry<Integer, Integer> set :
-        mapP1.entrySet()) {
-            io.print(set.getKey() + "[ " + set.getValue() + "] | ");
+            System.out.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
+
+            if (count >= 6) {
+                break;
+            }
         }
 
         io.println(lstOfPlayers[0] + " |");
