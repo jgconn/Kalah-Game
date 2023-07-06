@@ -1,7 +1,6 @@
 package kalah;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class SeedList {
     private HashMap<Integer, Integer> mapP1 = new HashMap<>();
@@ -36,5 +35,13 @@ public class SeedList {
 
     public HashMap<Integer, Integer> getMapP2() {
         return mapP2;
+    }
+
+    public Integer getMapP1Seeds(int house) {
+        return mapP1.get(house);
+    }
+
+    public Integer getMapP2Seeds(int house) {
+        return mapP2.get(house);
     }
 }

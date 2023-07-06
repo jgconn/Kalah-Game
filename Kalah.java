@@ -25,23 +25,27 @@ public class Kalah {
 			playerInput = playerTurn.getPrompt();
 			try {
 				if (playerInput.equals("q")) {
-					throw new IllegalArgumentException("Game over!");
+					throw new IllegalArgumentException("Game over");
 				}
 
 				int playerInputInt = Integer.parseInt(playerInput);
 
 				if (playerInputInt < 1 || playerInputInt > 6) {
-					throw new ArrayIndexOutOfBoundsException("Out of boudnds, please try again!");
+					throw new ArrayIndexOutOfBoundsException("Out of bounds, please try again!");
 				}
 
 				// add movement class
+				//io.println(String.valueOf(playerTurn.getCurrentTurn()));
+				movement.moveSeed(playerInputInt, playerTurn.getCurrentTurn(), seedList);
+				board.printBoard(rules, seedList);
+
 
 			} catch (NumberFormatException e) {
 				io.println("Invalid input, please try again!");
 			} catch (IllegalArgumentException e) {
 				io.println(e.getMessage());
 			} catch (ArrayIndexOutOfBoundsException e) {
-				io.println((e.getMessage()));
+				io.println(e.getMessage());
 			}
 		}
 	}

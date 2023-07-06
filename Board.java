@@ -18,6 +18,14 @@ public class Board {
         outerBoarder();
     }
 
+    public void printBoard(Rules rules, SeedList seedList) {
+        outerBoarder();
+        player2Board(rules.getLstOfPlayers(), seedList.getMapP2());
+        innerBoarder();
+        player1Board(rules.getLstOfPlayers(), seedList.getMapP1());
+        outerBoarder();
+    }
+
     public void outerBoarder() {
         io.println("+----+-------+-------+-------+-------+-------+-------+----+");
     }

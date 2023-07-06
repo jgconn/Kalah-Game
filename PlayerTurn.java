@@ -14,6 +14,7 @@ public class PlayerTurn {
     public String getPrompt() {
         String currentPlayer = lstOfPlayers[currentTurn];
         String input = io.readFromKeyboard("Player " + currentPlayer + "'s turn - Specify house number or 'q' to quit: ");
+
         return input;
     }
 
