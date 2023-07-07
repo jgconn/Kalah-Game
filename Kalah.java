@@ -36,7 +36,7 @@ public class Kalah {
 
 				// add movement class
 				//io.println(String.valueOf(playerTurn.getCurrentTurn()));
-				movement.moveSeed(playerInputInt, playerTurn.getCurrentTurn(), seedList);
+				movement.moveSeed(playerInputInt, playerTurn, seedList);
 				board.printBoard(rules, seedList);
 
 
