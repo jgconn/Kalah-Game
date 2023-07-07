@@ -3,71 +3,118 @@ package kalah;
 import java.util.Map;
 
 public class Movement {
-    private boolean rollOver = false;
-    private int rollOverSeed = 0;
+    private int currentTurn;
+    private int playerInput;
+    private int seedCount = 0;
+    private int overFlow = 0;
+    private int incrementHouse = 0;
+    private boolean wipeInput = false;
+    private int whoTurn;
     public Movement(PlayerTurn playerTurn, SeedList seedList) {
 
     }
 
-    public void moveSeed(int playerInput, PlayerTurn playerTurn, SeedList seedList) {
+    public void moveSeed(PlayerTurn playerTurn, SeedList seedList) {
         // test
-        int currentTurn = playerTurn.getCurrentTurn();
+        this.playerInput = Integer.parseInt(playerTurn.getInput());
+        this.currentTurn = playerTurn.getCurrentTurn();
         Runnable nextTurnFunction = playerTurn::nextTurn;
 
-        int nextHouse = playerInput;
         if (currentTurn ==  0) {
-            moveP1seeds(playerInput, nextHouse, seedList, nextTurnFunction);
+            whoTurn = 0;
+            moveP1seeds(playerInput, seedList, nextTurnFunction);
         } else {
-            moveP2seeds(playerInput, nextHouse, seedList);
+            whoTurn = 1;
+            moveP2seeds(playerInput, seedList, nextTurnFunction);
         }
     }
 
-    public void moveP1seeds(int playerInput, int nextHouse, SeedList seedList, Runnable nextTurnFunction) {
-        int seedCount = seedList.getMapP1Seeds(playerInput);
+    public void moveP1seeds(int playerInput, SeedList seedList, Runnable nextTurnFunction) {
+        boolean zeroSeedHouse = false;
+        seedCount = getSeedCount(seedList);
+
         for (int i = 0; i < seedCount; i++) {
-            try {
-                seedList.setMapP1Seed(nextHouse + 1, seedList.getMapP1Seeds(nextHouse + 1) + 1);
-                nextHouse++;
+            if (seedList.getMapP1Seeds(incrementHouse) != null) {
+                if (seedList.getMapP1Seeds(incrementHouse) == 0) {
+                    zeroSeedHouse = true;
+                }
+                seedList.setMapP1Seed(incrementHouse, seedList.getMapP1Seeds(incrementHouse) + 1);
+                incrementHouse++;
+            } else {
+                overFlow++;
             }
-            catch (NullPointerException e) {
-                rollOver = true;
-                rollOverSeed = i;
+        }
+
+        if (overFlow > 0) {
+            zeroSeedHouse = false;
+            moveP2seeds( 1, seedList, nextTurnFunction);
+            wipeInput = true;
+        }
+
+        if (whoTurn == 0) {
+            if (overFlow == 0 && zeroSeedHouse) {
+                System.out.println("Player 1 turn");
+            } else {
+                System.out.println("Player 2 turn");
+                nextTurnFunction.run();
             }
         }
 
-        if (rollOver) {
-            moveP2seeds( 1, 0, seedList);
-        }
 
-        seedList.setMapP1Seed(playerInput, 0);
-
-        if (seedList.getMapP1Seeds(nextHouse) > 1 || nextHouse > 7) {
-            nextTurnFunction.run();
+        if (wipeInput) {
+            seedList.setMapP1Seed(playerInput, 0);
         }
-        rollOver = false;
     }
 
-    public void moveP2seeds(int playerInput, int nextHouse, SeedList seedList) {
-        int seedCount = seedList.getMapP2Seeds(playerInput);
-
-        if (rollOver){
-            seedCount = rollOverSeed;
-            System.out.println(nextHouse);
-        }
+    public void moveP2seeds(int playerInput, SeedList seedList, Runnable nextTurnFunction) {
+        boolean zeroSeedHouse = false;
+        seedCount = getSeedCount(seedList);
 
         for (int i = 0; i < seedCount; i++) {
-            try {
-                seedList.setMapP2Seed(nextHouse + 1, seedList.getMapP2Seeds(nextHouse + 1) + 1);
-                nextHouse++;
-            }
-            catch (NullPointerException e) {
-                System.out.println("PPPOOOP");
+            if (seedList.getMapP2Seeds(incrementHouse) != null) {
+                if (seedList.getMapP2Seeds(incrementHouse) == 0) {
+                    zeroSeedHouse = true;
+                }
+                seedList.setMapP2Seed(incrementHouse, seedList.getMapP2Seeds(incrementHouse) + 1);
+                incrementHouse++;
+            } else {
+                overFlow++;
             }
         }
-        if (rollOver = false) {
+
+        if (overFlow > 0) {
+            zeroSeedHouse = false;
+            moveP1seeds( 1, seedList, nextTurnFunction);
+            wipeInput = true;
+        }
+
+        if (whoTurn == 1) {
+            if (overFlow == 0 && zeroSeedHouse) {
+                System.out.println("Player 2 turn");
+            } else {
+                System.out.println("Player 1 turn");
+                nextTurnFunction.run();
+            }
+        }
+
+        if (wipeInput) {
             seedList.setMapP2Seed(playerInput, 0);
         }
-        rollOver = false;
     }
 
+    public int getSeedCount(SeedList seedList) {
+        if (currentTurn == 0 && overFlow == 0) {
+            seedCount = seedList.getMapP1Seeds(playerInput);
+            incrementHouse = playerInput + 1;
+        } else if (currentTurn == 1 && overFlow == 0) {
+            seedCount = seedList.getMapP2Seeds(playerInput);
+            incrementHouse = playerInput + 1;
+        } else if (overFlow > 0) {
+            seedCount = overFlow;
+            incrementHouse = 1;
+            overFlow = 0;
+        }
+
+        return seedCount;
+    }
 }

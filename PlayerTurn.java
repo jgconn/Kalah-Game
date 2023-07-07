@@ -6,6 +6,7 @@ public class PlayerTurn {
     private IO io;
     private String[] lstOfPlayers;
     private int currentTurn = 0;
+    private String input;
     public  PlayerTurn(IO io, Rules rules) {
         this.io = io;
         this.lstOfPlayers = rules.getLstOfPlayers();
@@ -14,7 +15,7 @@ public class PlayerTurn {
     public String getPrompt() {
         String currentPlayer = lstOfPlayers[currentTurn];
         String input = io.readFromKeyboard("Player " + currentPlayer + "'s turn - Specify house number or 'q' to quit: ");
-
+        setInput(input);
         return input;
     }
 
@@ -32,5 +33,13 @@ public class PlayerTurn {
 
     public int getCurrentTurn() {
         return currentTurn;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public String getInput() {
+        return input;
     }
 }
