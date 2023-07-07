@@ -36,7 +36,11 @@ public class Movement {
         seedCount = getSeedCount(seedList);
 
         for (int i = 0; i < seedCount; i++) {
-            if (seedList.getMapP1Seeds(incrementHouse) != null) {
+            if (seedList.getMapP1Seeds(playerInput) == 0) {
+
+                break;
+            }
+            else if (seedList.getMapP1Seeds(incrementHouse) != null) {
                 if (seedList.getMapP1Seeds(incrementHouse) == 0) {
                     zeroSeedHouse = true;
                     zeroSeedCapture = incrementHouse;

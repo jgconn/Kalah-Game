@@ -42,27 +42,26 @@ public class Board {
         for (int i = 1; i < 7; i++) {
             Map.Entry<Integer, Integer> entry = entryList.get(i);
             count++;
-
-            System.out.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
+            io.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
 
             if (count >= 6) {
                 break;
             }
         }
 
-        io.println(mapP1.get(7) + "  |");
+        io.println(" " + mapP1.get(7) + " |");
     }
 
     public void player1Board(String[] lstOfPlayers, SeedList seedList) {
         Map<Integer, Integer> mapP1 = seedList.getMapP1();
         Map<Integer, Integer> mapP2 = seedList.getMapP2();
-        io.print("| " + mapP2.get(7) + "  | ");
+        io.print("|  " + mapP2.get(7) + " | ");
 
         int count = 0;
         for (Map.Entry<Integer, Integer> entry : mapP1.entrySet()) {
             count++;
 
-            System.out.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
+            io.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
 
             if (count >= 6) {
                 break;

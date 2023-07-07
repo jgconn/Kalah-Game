@@ -34,6 +34,16 @@ public class Kalah {
 					throw new ArrayIndexOutOfBoundsException("Out of bounds, please try again!");
 				}
 
+				if (playerTurn.getCurrentTurn() == 0) {
+					if (seedList.getMapP1Seeds(playerInputInt) == 0) {
+						throw new NullPointerException("House is empty. Move again.");
+					}
+				} else {
+					if (seedList.getMapP2Seeds(playerInputInt) == 0) {
+						throw new NullPointerException("House is empty. Move again.");
+					}
+				}
+
 				// add movement class
 				//io.println(String.valueOf(playerTurn.getCurrentTurn()));
 				movement.moveSeed(playerTurn, seedList);
@@ -44,8 +54,12 @@ public class Kalah {
 				io.println("Invalid input, please try again!");
 			} catch (IllegalArgumentException e) {
 				io.println(e.getMessage());
+				board.printBoard(rules, seedList);
 			} catch (ArrayIndexOutOfBoundsException e) {
 				io.println(e.getMessage());
+			} catch (NullPointerException e) {
+				io.println(e.getMessage());
+				board.printBoard(rules, seedList);
 			}
 		}
 	}
