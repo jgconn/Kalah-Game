@@ -49,11 +49,15 @@ public class Movement {
         }
 
         //System.out.print(incrementHouse - 1);
+        int oppositeHouse = transformValue(incrementHouse - 1);
         if (whoTurn == 0) {
-            if (seedList.getMapP1Seeds(incrementHouse - 1) == 1 && incrementHouse  != 8) {
-                int oppositeHouse = transformValue(incrementHouse - 1);
-                seedList.setMapP1Seed(incrementHouse - 1, seedList.getMapP1Seeds(incrementHouse - 1) +
+            if (seedList.getMapP1Seeds(incrementHouse - 1) == 1 && incrementHouse  != 8 &&
+            seedList.getMapP2Seeds(oppositeHouse) > 0) {
+
+                seedList.setMapP1Seed(7, seedList.getMapP1Seeds(7) +
+                        seedList.getMapP1Seeds(incrementHouse - 1) +
                         seedList.getMapP2Seeds(oppositeHouse));
+                seedList.setMapP1Seed(incrementHouse - 1, 0);
                 seedList.setMapP2Seed(oppositeHouse, 0);
                 nextTurnFunction.run();
 
@@ -99,12 +103,16 @@ public class Movement {
             wipeInput = true;
         }
 
+        int oppositeHouse = transformValue(incrementHouse - 1);
+
         if (whoTurn == 1) {
-            if (seedList.getMapP2Seeds(incrementHouse - 1) == 0 && incrementHouse  != 8) {
-                int oppositeHouse = transformValue(incrementHouse - 1);
-                seedList.setMapP2Seed(incrementHouse - 1, seedList.getMapP2Seeds(incrementHouse - 1) +
+            if (seedList.getMapP2Seeds(incrementHouse - 1) == 0 && incrementHouse  != 8 &&
+            seedList.getMapP1Seeds(oppositeHouse) > 0) {
+                seedList.setMapP2Seed(7, seedList.getMapP2Seeds(7) +
+                        seedList.getMapP2Seeds(incrementHouse - 1) +
                         seedList.getMapP1Seeds(oppositeHouse));
                 seedList.setMapP1Seed(oppositeHouse, 0);
+                seedList.setMapP2Seed(incrementHouse - 1, 0);
                 nextTurnFunction.run();
             } else if (incrementHouse - 1 == 7) {
                 //Player score
