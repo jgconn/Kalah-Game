@@ -22,6 +22,17 @@ public class Kalah {
 		Movement movement = new Movement(playerTurn, seedList);
 
 		while (!playerInput.equals("q")) {
+			int checkWinner = board.compareWinner(seedList, playerTurn.getCurrentTurn());
+
+			if (checkWinner != -1) {
+				int totalScore = board.addUpScore(seedList, checkWinner);
+
+				System.out.println("END");
+				io.println("Game over");
+				board.printBoard(rules, seedList);
+				board.getScores(seedList, checkWinner, totalScore);
+				break;
+			}
 			playerInput = playerTurn.getPrompt();
 			try {
 				if (playerInput.equals("q")) {
@@ -43,11 +54,15 @@ public class Kalah {
 						throw new NullPointerException("House is empty. Move again.");
 					}
 				}
+				movement.moveSeed(playerTurn, seedList);
+				board.printBoard(rules, seedList);
+
+
 
 				// add movement class
 				//io.println(String.valueOf(playerTurn.getCurrentTurn()));
-				movement.moveSeed(playerTurn, seedList);
-				board.printBoard(rules, seedList);
+				//movement.moveSeed(playerTurn, seedList);
+				//board.printBoard(rules, seedList);
 
 
 			} catch (NumberFormatException e) {
