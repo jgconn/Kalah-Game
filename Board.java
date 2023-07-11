@@ -1,120 +1,119 @@
 package kalah;
 
 import com.qualitascorpus.testsupport.IO;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Board {
     private IO io;
+    private Rules rules;
+    private SeedList seedList2;
 
     public Board(IO io, Rules rules, SeedList seedList) {
         this.io = io;
-        printBoard(rules, seedList);
+        this.rules = rules;
+        this.seedList2 = seedList;
+        printBoard();
     }
 
-    public void printBoard(Rules rules, SeedList seedList) {
+    public void printBoard() {
         outerBoarder();
-        player2Board(rules.getLstOfPlayers(), seedList);
+        player2Board();
         innerBoarder();
-        player1Board(rules.getLstOfPlayers(), seedList);
+        player1Board();
         outerBoarder();
     }
 
-    public int compareWinner(SeedList seedList, int whoTurn) {
+    public int compareWinner(int whoTurn) {
         int checkWinner;
-        if (whoTurn == 0) {
-            Map<Integer, Integer> hashMap1 = seedList.getMapP1();
-            checkWinner = checkWinner(hashMap1, 0);
-        } else {
-            //System.out.println(whoTurn);
-            Map<Integer, Integer> hashMap2 = seedList.getMapP2();
-            checkWinner = checkWinner(hashMap2, 1);
+        int checkPlayer;
+        Map<Integer, Integer> hashMap;
 
+        if (whoTurn == 0) {
+            hashMap = seedList2.getMapP1();
+            checkPlayer = 0;
+        } else {
+            hashMap = seedList2.getMapP2();
+            checkPlayer = 1;
         }
+
+        checkWinner = checkWinner(hashMap, checkPlayer);
 
         return checkWinner;
     }
 
-    public int checkWinner(Map<Integer, Integer> hashMap, int player) {
-        if (player == 0) {
-            for (int i = 1; i <= 7; i++) {
-                if (i != 7 && hashMap.getOrDefault(i, 0) != 0) {
-                    return -1; // Value is not equal to 0, not all values are zero
-                }
+    private int checkWinner(Map<Integer, Integer> hashMap, int player) {
+        boolean allValuesZero = true;
+        for (int i = 1; i < 7; i++) {
+            if (hashMap.getOrDefault(i, 0) != 0) {
+                allValuesZero = false;
+                break;
             }
-            return 0; // All values are equal to 0
         }
-        if (player == 1) {
-            for (int i = 1; i <= 7; i++) {
 
-                if (i != 7 && hashMap.getOrDefault(i, 0) != 0) {
-                    return -1; // Value is not equal to 0, not all values are zero
-                }
+        if (allValuesZero) {
+            if (player == 0) {
+                return 0; // Player 0 wins
+            } else if (player == 1) {
+                return 1; // Player 1 wins
             }
-            //System.out.println("MOOBIE 22");
-            return 1; // All values are equal to 0
         }
-        return -1;
+
+        return -1; // No winner
     }
 
-    public void getScores(SeedList seedList, int winner, int totalScore) {
-        if (winner == 0) {
-            //System.out.println("winner == 0 WINNER");
-            int sum = seedList.getMapP2Seeds(7) + totalScore;
-            io.println("\tplayer 1:" + seedList.getMapP1Seeds(7));
-            io.println("\tplayer 2:" + sum);
-            if (sum == seedList.getMapP1Seeds(7)) {
-                io.println("A tie!");
-            } else {
-                io.println("Player 2 wins!");
-            }
-        } else {
-            //System.out.println("winner == 1 WINNER");
-            int sum = seedList.getMapP1Seeds(7) + totalScore;
-            io.println("\tplayer 1:" + sum);
-            io.println("\tplayer 2:" + seedList.getMapP2Seeds(7));
-            if (sum == seedList.getMapP2Seeds(7)) {
-                io.println("A tie!");
-            } else {
-                io.println("Player 1 wins!");
-            }
-        }
-    }
+    public void getScores(int winner, int totalScore) {
+        int player1Score = seedList2.getMapP1Seeds(7);
+        int player2Score = seedList2.getMapP2Seeds(7);
 
-    public int addUpScore(SeedList seedList, int winner) {
-        int totalScore = 0;
         if (winner == 0) {
-            Map<Integer, Integer> hashMap = seedList.getMapP2();
-            for (int i = 1; i <= 6; i++) {
-                if (hashMap.containsKey(i)) {
-                    totalScore += hashMap.get(i);
-                }
-            }
-            return totalScore;
+            player2Score += totalScore;
+            io.println("\tplayer 1:" + player1Score);
+            io.println("\tplayer 2:" + player2Score);
         } else if (winner == 1) {
-            Map<Integer, Integer> hashMap = seedList.getMapP1();
-            for (int i = 1; i <= 6; i++) {
-                if (hashMap.containsKey(i)) {
-                    totalScore += hashMap.get(i);
-                }
-            }
-            return totalScore;
+            player1Score += totalScore;
+            io.println("\tplayer 1:" + player1Score);
+            io.println("\tplayer 2:" + player2Score);
         }
 
-        return totalScore;
+        if (player1Score == player2Score) {
+            io.println("A tie!");
+        } else if (player1Score > player2Score) {
+            io.println("Player 1 wins!");
+        } else if (player2Score > player1Score) {
+            io.println("Player 2 wins!");
+        }
+    }
+
+    public int addUpScore(int winner) {
+        int sumScore = 0;
+        Map<Integer, Integer> hashMap = null;
+        
+        if (winner == 0) {
+            hashMap = seedList2.getMapP2();
+        } else if (winner == 1) {
+            hashMap = seedList2.getMapP1();
+        }
+
+        for (int i = 1; i <= 6; i++) {
+            if (hashMap.containsKey(i)) {
+                sumScore += hashMap.get(i);
+            }
+        }
+        return sumScore;
     }
 
     public void outerBoarder() {
         io.println("+----+-------+-------+-------+-------+-------+-------+----+");
     }
 
-    public void player2Board(String[] lstOfPlayers, SeedList seedList) {
+    public void player2Board() {
         //io.println("| P2 | 6[ 4] | 5[ 4] | 4[ 4] | 3[ 4] | 2[ 4] | 1[ 4] |  0 |");
-        Map<Integer, Integer> mapP1 = seedList.getMapP1();
-        Map<Integer, Integer> mapP2 = seedList.getMapP2();
+        String[] lstOfPlayers = rules.getLstOfPlayers();
+
+        Map<Integer, Integer> mapP1 = seedList2.getMapP1();
+        Map<Integer, Integer> mapP2 = seedList2.getMapP2();
 
         ArrayList<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(mapP2.entrySet());
         Collections.reverse(entryList); // Reverse the entry list
@@ -133,7 +132,6 @@ public class Board {
                 io.print(entry.getKey() + "[ " + entry.getValue() + "] | ");
             }
 
-
             if (count >= 6) {
                 break;
             }
@@ -146,9 +144,12 @@ public class Board {
         }
     }
 
-    public void player1Board(String[] lstOfPlayers, SeedList seedList) {
-        Map<Integer, Integer> mapP1 = seedList.getMapP1();
-        Map<Integer, Integer> mapP2 = seedList.getMapP2();
+    public void player1Board() {
+        String[] lstOfPlayers = rules.getLstOfPlayers();
+
+        Map<Integer, Integer> mapP1 = seedList2.getMapP1();
+        Map<Integer, Integer> mapP2 = seedList2.getMapP2();
+
         if (Integer.toString(mapP2.get(7)).length() == 2) {
             io.print("| " + mapP2.get(7) + " | ");
         } else{

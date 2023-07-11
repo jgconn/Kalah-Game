@@ -3,79 +3,87 @@ package kalah;
 import com.qualitascorpus.testsupport.IO;
 import com.qualitascorpus.testsupport.MockIO;
 
-/**
- * This class is the starting point for a Kalah implementation using
- * the test infrastructure. Remove this comment (or rather, replace it
- * with something more appropriate)
- */
+import java.util.NoSuchElementException;
+
 public class Kalah {
+	private SeedList seedList;
+	private Rules rules;
+	private Board board;
+	private PlayerTurn playerTurn;
+	private Movement movement;
 	private String playerInput = "";
 	public static void main(String[] args) {
 		new Kalah().play(new MockIO());
 	}
 	public void play(IO io) {
-		// Replace what's below with your implementation
-		SeedList seedList = new SeedList();
-		Rules rules = new Rules();
-		Board board = new Board(io, rules, seedList);
-		PlayerTurn playerTurn = new PlayerTurn(io, rules);
-		Movement movement = new Movement(playerTurn, seedList);
+		initialiseGame(io);
 
 		while (!playerInput.equals("q")) {
-			int checkWinner = board.compareWinner(seedList, playerTurn.getCurrentTurn());
+			int winnerIndex = board.compareWinner(playerTurn.getCurrentTurn());
 
-			if (checkWinner != -1) {
-				int totalScore = board.addUpScore(seedList, checkWinner);
+			if (winnerIndex != -1) {
+				int totalScore = board.addUpScore(winnerIndex);
 
-				System.out.println("END");
 				io.println("Game over");
-				board.printBoard(rules, seedList);
-				board.getScores(seedList, checkWinner, totalScore);
+				board.printBoard();
+				board.getScores(winnerIndex, totalScore);
 				break;
 			}
+
 			playerInput = playerTurn.getPrompt();
+
 			try {
-				if (playerInput.equals("q")) {
-					throw new IllegalArgumentException("Game over");
-				}
-
+				validatePlayerInput(playerInput);
 				int playerInputInt = Integer.parseInt(playerInput);
-
-				if (playerInputInt < 1 || playerInputInt > 6) {
-					throw new ArrayIndexOutOfBoundsException("Out of bounds, please try again!");
-				}
+				validatePlayerInputBounds(playerInputInt);
 
 				if (playerTurn.getCurrentTurn() == 0) {
-					if (seedList.getMapP1Seeds(playerInputInt) == 0) {
-						throw new NullPointerException("House is empty. Move again.");
-					}
+					validateNonEmptyHouse(seedList.getMapP1Seeds(playerInputInt));
 				} else {
-					if (seedList.getMapP2Seeds(playerInputInt) == 0) {
-						throw new NullPointerException("House is empty. Move again.");
-					}
+					validateNonEmptyHouse(seedList.getMapP2Seeds(playerInputInt));
 				}
+
 				movement.moveSeed(playerTurn, seedList);
-				board.printBoard(rules, seedList);
-
-
-
-				// add movement class
-				//io.println(String.valueOf(playerTurn.getCurrentTurn()));
-				//movement.moveSeed(playerTurn, seedList);
-				//board.printBoard(rules, seedList);
-
+				board.printBoard();
 
 			} catch (NumberFormatException e) {
 				io.println("Invalid input, please try again!");
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
 				io.println(e.getMessage());
-				board.printBoard(rules, seedList);
-			} catch (ArrayIndexOutOfBoundsException e) {
+				board.printBoard();
+			} catch (NoSuchElementException e) {
 				io.println(e.getMessage());
-			} catch (NullPointerException e) {
-				io.println(e.getMessage());
-				board.printBoard(rules, seedList);
+				board.printBoard();
+			} catch (Exception e) {
+				io.println("An unexpected error occurred.");
+				board.printBoard();
 			}
 		}
+	}
+
+	private void validatePlayerInput(String playerInput) {
+		if (playerInput.equals("q")) {
+			throw new IllegalArgumentException("Game over");
+		}
+	}
+
+	private void validatePlayerInputBounds(int playerInputInt) {
+		if (playerInputInt < 1 || playerInputInt > 6) {
+			throw new ArrayIndexOutOfBoundsException("Out of bounds, please try again!");
+		}
+	}
+
+	private void validateNonEmptyHouse(int seedCount) {
+		if (seedCount == 0) {
+			throw new NoSuchElementException("House is empty. Move again.");
+		}
+	}
+
+	public void initialiseGame(IO io) {
+		this.seedList = new SeedList();
+		this.rules = new Rules();
+		this.board = new Board(io, rules, seedList);
+		this.playerTurn = new PlayerTurn(io, rules);
+		this.movement = new Movement(playerTurn, seedList);
 	}
 }
